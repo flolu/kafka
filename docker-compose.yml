@@ -1,0 +1,14 @@
+version: '3'
+services:
+  server:
+    image: node:16
+    container_name: kafka_example_server
+    volumes:
+      - ./server.ts:/server.ts
+      - ./node_modules:/node_modules
+      - ./tsconfig.json:/tsconfig.json
+      - ./package.json:/package.json
+    ports:
+      - '8080:8080'
+    working_dir: /
+    command: npx ts-node-dev server.ts
