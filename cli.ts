@@ -16,19 +16,34 @@ function setupKeyListener(handler: (key: string) => void) {
 
 async function main() {
   const ws = new WebSocket('ws://localhost:8080')
+  const address = process.argv[2]
 
   ws.on('open', () => {
-    ws.send('ping')
+    ws.send(JSON.stringify({type: 'start_wallet', data: address}))
+    ws.send(JSON.stringify({type: 'read_balance', data: null}))
 
     setupKeyListener(() => {
-      ws.send('ping')
+      ws.send(JSON.stringify({type: 'read_balance', data: null}))
     })
+
+    process.stdout.write('Loading...')
   })
 
-  ws.on('message', data => {
-    process.stdout.clearLine(0)
-    process.stdout.cursorTo(0)
-    process.stdout.write(data.toString())
+  ws.on('message', (payload: string) => {
+    const {data, type} = JSON.parse(payload)
+
+    switch (type) {
+      case 'balance': {
+        const {balance, price} = data
+
+        // if (balance < 0) break
+
+        process.stdout.clearLine(0)
+        process.stdout.cursorTo(0)
+        process.stdout.write(`$${balance * price} (${balance} BTC @ $${price})`)
+        break
+      }
+    }
   })
 }
 
