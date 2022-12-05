@@ -39,6 +39,6 @@
 
 - [`cli.ts`](cli.ts) CLI application to read wallet data in realtime
 - [`server.ts`](server.ts) WebSocket server that communicates with CLI and with Kafka
-- [`crawler.ts`](crawler.ts) Service, that crawls wallet balance on demand
+- [`balance.ts`](balance.ts) Service, that crawls wallet balance on demand
 - [`price.ts`](price.ts) Service, that writes realtime price events to Kafka
 - [`docker-compose.yml`](docker-compose.yml) backend development environment
