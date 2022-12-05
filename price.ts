@@ -8,7 +8,6 @@ const BTC_USDT_TICKER = 'BTCUSDT'
 
 async function main() {
   await producer.connect()
-  console.log('Producer connected')
 
   const callbacks = {
     message: async (data: string) => {

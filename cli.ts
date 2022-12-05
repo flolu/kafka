@@ -36,7 +36,7 @@ async function main() {
       case 'balance': {
         const {balance, price} = data
 
-        // if (balance < 0) break
+        if (balance < 0 || price < 0) break
 
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
