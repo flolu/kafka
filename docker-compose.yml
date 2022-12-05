@@ -9,7 +9,7 @@ services:
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
     ports:
-      - '8080:8080'
+      - '3000:3000'
     working_dir: /
     command: npx ts-node-dev server.ts
 
@@ -63,3 +63,14 @@ services:
       KAFKA_LOG4J_LOGGERS: 'kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
+
+  console:
+    container_name: kafka_example_console
+    image: docker.redpanda.com/vectorized/console:master-173596f
+    restart: on-failure
+    environment:
+      KAFKA_BROKERS: kafka:9092
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka

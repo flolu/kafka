@@ -15,7 +15,7 @@ function setupKeyListener(handler: (key: string) => void) {
 }
 
 async function main() {
-  const ws = new WebSocket('ws://localhost:8080')
+  const ws = new WebSocket('ws://localhost:3000')
   const address = process.argv[2]
 
   ws.on('open', () => {
@@ -40,7 +40,9 @@ async function main() {
 
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
-        process.stdout.write(`$${balance * price} (${balance} BTC @ $${price})`)
+        process.stdout.write(
+          `$${(balance * price).toFixed(2)} (${balance} BTC @ $${Number(price).toFixed(2)})`
+        )
         break
       }
     }

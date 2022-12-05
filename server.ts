@@ -2,7 +2,7 @@ import {v4 as uuidv4} from 'uuid'
 import {WebSocketServer, WebSocket} from 'ws'
 import {Kafka} from 'kafkajs'
 
-const wss = new WebSocketServer({port: 8080})
+const wss = new WebSocketServer({port: 3000})
 const kafka = new Kafka({brokers: ['kafka:9092']})
 const priceConsumer = kafka.consumer({groupId: uuidv4()})
 const balanceConsumer = kafka.consumer({groupId: uuidv4()})
@@ -11,6 +11,7 @@ const producer = kafka.producer()
 const clients = new Map<string, WebSocket>()
 const clientWallets = new Map<string, string>()
 const walletBalances = new Map<string, number>()
+// TODO also handle ethereum
 let price = -1
 
 async function pleaseCrawlBalance(address: string) {

@@ -33,12 +33,21 @@
 
 **Setup**
 
-- `npm install`
+- `npm install` (Install NPM dependencies)
+- `docker-compose -f docker-compose.yml up --build` (Start services)
+
+**Run**
+
+- `npx ts-node cli.ts <WALLET_ADDRESS>` (Watch a BTC or ETH wallet)
+
+**Examples**
+
+- `npx ts-node cli.ts 34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo` (Watch a BTC wallet)
+- `npx ts-node cli.ts 0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8` (Watch an ETH wallet)
 
 # Codebase
 
-- [`cli.ts`](cli.ts) CLI application to read wallet data in realtime
-- [`server.ts`](server.ts) WebSocket server that communicates with CLI and with Kafka
-- [`balance.ts`](balance.ts) Service, that crawls wallet balance on demand
-- [`price.ts`](price.ts) Service, that writes realtime price events to Kafka
-- [`docker-compose.yml`](docker-compose.yml) backend development environment
+- [`cli.ts`](cli.ts) (CLI application to read wallet data in realtime)
+- [`server.ts`](server.ts) (WebSocket server that communicates with CLI and with Kafka)
+- [`balance.ts`](balance.ts) (Service, that crawls wallet balance on demand)
+- [`price.ts`](price.ts) (Service, that writes realtime price events to Kafka)

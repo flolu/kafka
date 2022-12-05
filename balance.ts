@@ -6,6 +6,10 @@ const kafka = new Kafka({brokers: ['kafka:9092']})
 const producer = kafka.producer()
 const taskConsumer = kafka.consumer({groupId: 'balance_crawler'})
 
+// Smallest units
+// BTC: 100000000
+// ETH: 1000000000000000000
+
 async function main() {
   await producer.connect()
   await taskConsumer.connect()
