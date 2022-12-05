@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "@binance/connector": "^2.0.0-rc.4",
     "kafkajs": "^2.2.3",
     "ws": "^8.11.0"
   },
@@ -16,7 +17,6 @@
     "singleQuote": true,
     "bracketSpacing": false,
     "semi": false,
-    "arrowParens": "avoid",
     "printWidth": 100
   }
 }
