@@ -9,13 +9,13 @@ const balanceConsumer = kafka.consumer({groupId: uuidv4()})
 const producer = kafka.producer()
 
 const clients = new Map<string, WebSocket>()
-const clientWallets = new Map<string, string>()
+const clientWallets = new Map<string, {address: string; currency: string}>()
 const walletBalances = new Map<string, number>()
-// TODO also handle ethereum
-let price = -1
+const prices: Record<string, number | null> = {btc: null, eth: null}
 
-async function pleaseCrawlBalance(address: string) {
-  const payload = JSON.stringify({address})
+// TODO send task automatically every x seconds, too!
+async function pleaseCrawlBalance(address: string, currency: string) {
+  const payload = JSON.stringify({address, currency})
   await producer.send({
     topic: 'task_crawl_balance',
     messages: [{key: address, value: Buffer.from(payload, 'utf-8')}],
@@ -28,19 +28,22 @@ async function main() {
   await producer.connect()
 
   await priceConsumer.subscribe({topic: 'price', fromBeginning: false})
-  await balanceConsumer.subscribe({topic: 'btc_balance', fromBeginning: false})
+  await balanceConsumer.subscribe({topic: 'wallet_balance', fromBeginning: false})
 
   await priceConsumer.run({
     eachMessage: async ({message}) => {
       const payload = JSON.parse(message.value!.toString())
+      const currency = message.key!.toString()
+      prices[currency] = payload.price
+
       clients.forEach((ws, id) => {
         const wallet = clientWallets.get(id)
 
-        if (wallet) {
-          const balance = walletBalances.get(wallet) || -1
-          price = payload.usdt
-
-          ws.send(JSON.stringify({type: 'balance', data: {balance, price}}))
+        if (wallet && wallet.currency === currency) {
+          const balance = walletBalances.get(wallet.address) || null
+          ws.send(
+            JSON.stringify({type: 'balance', data: {balance, price: prices[currency], currency}})
+          )
         }
       })
     },
@@ -52,11 +55,16 @@ async function main() {
       const address = message.key!.toString()
 
       walletBalances.set(address, balance)
-      clientWallets.forEach((clientId, walletAddress) => {
-        if (walletAddress === address) {
+      clientWallets.forEach((wallet, clientId) => {
+        if (wallet.address === address) {
           const ws = clients.get(clientId)
           if (ws) {
-            ws.send(JSON.stringify({type: 'balance', data: {balance, price}}))
+            ws.send(
+              JSON.stringify({
+                type: 'balance',
+                data: {balance, price: prices[wallet.currency], currency: wallet.currency},
+              })
+            )
           }
         }
       })
@@ -76,14 +84,16 @@ async function main() {
 
       switch (type) {
         case 'start_wallet': {
-          clientWallets.set(socketId, data)
-          await pleaseCrawlBalance(data)
+          const address = data
+          const currency = address.startsWith('0x') ? 'eth' : 'btc'
+          clientWallets.set(socketId, {address, currency})
+          await pleaseCrawlBalance(address, currency)
           break
         }
 
         case 'read_balance': {
-          const address = clientWallets.get(socketId)
-          if (address) await pleaseCrawlBalance(address)
+          const wallet = clientWallets.get(socketId)
+          if (wallet) await pleaseCrawlBalance(wallet.address, wallet.currency)
           break
         }
       }

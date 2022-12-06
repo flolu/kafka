@@ -45,6 +45,10 @@
 - `npx ts-node cli.ts 34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo` (Watch a BTC wallet)
 - `npx ts-node cli.ts 0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8` (Watch an ETH wallet)
 
+**Monitoring**
+
+- http://localhost:8080 (Redpanda Console)
+
 # Codebase
 
 - [`cli.ts`](cli.ts) (CLI application to read wallet data in realtime)

@@ -7,6 +7,7 @@ function setupKeyListener(handler: (key: string) => void) {
 
   process.stdin.on('keypress', (str, key) => {
     if (key.ctrl && key.name === 'c') {
+      process.stdout.write('\n')
       process.exit()
     } else {
       handler(str)
@@ -34,15 +35,19 @@ async function main() {
 
     switch (type) {
       case 'balance': {
-        const {balance, price} = data
+        const {balance, price, currency} = data
 
         if (balance < 0 || price < 0) break
 
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
-        process.stdout.write(
-          `$${(balance * price).toFixed(2)} (${balance} BTC @ $${Number(price).toFixed(2)})`
-        )
+
+        const balanceUSD = (balance * price).toFixed(2)
+        const currencyTicker = currency.toUpperCase()
+        const priceUSD = Number(price).toFixed(2)
+
+        process.stdout.write(`$${balanceUSD} (${balance} ${currencyTicker} @ $${priceUSD})`)
+
         break
       }
     }
