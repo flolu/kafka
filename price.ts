@@ -24,10 +24,7 @@ async function main() {
     },
   }
 
-  const wsRef = client.combinedStreams(
-    [`${BTC_USDT_TICKER}@ticker`, `${ETH_USDT_TICKER}@ticker`],
-    callbacks
-  )
+  const wsRef = client.combinedStreams([`${BTC_USDT_TICKER}@ticker`, `${ETH_USDT_TICKER}@ticker`], callbacks)
 
   // setTimeout(() => client.unsubscribe(wsRef), 3000)
 }

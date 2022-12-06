@@ -19,8 +19,7 @@ async function main() {
       const url = `${API_URL}/${currency}/main/addrs/${address}/balance`
 
       const {data} = await axios.get(url)
-      const balance =
-        currency === 'btc' ? data.balance / 100000000 : data.balance / 1000000000000000000
+      const balance = currency === 'btc' ? data.balance / 100000000 : data.balance / 1000000000000000000
 
       const payload = JSON.stringify({balance})
       await producer.send({

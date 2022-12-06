@@ -42,9 +42,7 @@ async function main() {
 
         if (wallet && wallet.currency === currency) {
           const balance = walletBalances.get(wallet.address) || null
-          ws.send(
-            JSON.stringify({type: 'balance', data: {balance, price: prices[currency], currency}})
-          )
+          ws.send(JSON.stringify({type: 'balance', data: {balance, price: prices[currency], currency}}))
         }
       })
     },

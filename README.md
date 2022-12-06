@@ -5,6 +5,7 @@
   <br>
   <h1>Node.js Kafka Example</h1>
   <p>Realtime Bitcoin Wallet Tracker Example App with Node.js and Kafka</p>
+  <img width="420px" src="./.github/preview.gif" />
 </div>
 
 # Features
@@ -48,6 +49,10 @@
 **Monitoring**
 
 - http://localhost:8080 (Redpanda Console)
+
+**Notes**
+
+- Fetching the balance might stop working at some point, because [Blockcypher](https://www.blockcypher.com) limits the amount of requests one can send to their API
 
 # Codebase
 

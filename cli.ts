@@ -33,8 +33,8 @@ ws.on('message', (json: string) => {
 
       process.stdout.write(`Wallet:  ${currency.toUpperCase()}\n`)
       process.stdout.write(`Price:   ${price < 0 ? '...' : formatUSD(Number(price))}\n`)
-      process.stdout.write(`Balance: ${balance < 0 ? '...' : balance}\n`)
-      process.stdout.write(`Value:   ${balance < 0 ? '...' : formatUSD(balance * price)}\n`)
+      process.stdout.write(`Balance: ${balance < 0 || !balance ? '...' : balance}\n`)
+      process.stdout.write(`Value:   ${balance < 0 || !balance ? '...' : formatUSD(balance * price)}\n`)
       process.stdout.moveCursor(0, -OUTPUT_LINES_COUNT)
 
       break
