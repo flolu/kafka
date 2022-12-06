@@ -13,7 +13,6 @@ const clientWallets = new Map<string, {address: string; currency: string}>()
 const walletBalances = new Map<string, number>()
 const prices: Record<string, number | null> = {btc: null, eth: null}
 
-// TODO send task automatically every x seconds, too!
 async function pleaseCrawlBalance(address: string, currency: string) {
   const payload = JSON.stringify({address, currency})
   await producer.send({
@@ -26,6 +25,8 @@ async function main() {
   await priceConsumer.connect()
   await balanceConsumer.connect()
   await producer.connect()
+
+  console.log('connected')
 
   await priceConsumer.subscribe({topic: 'price', fromBeginning: false})
   await balanceConsumer.subscribe({topic: 'wallet_balance', fromBeginning: false})
@@ -75,12 +76,16 @@ async function main() {
     const socketId = uuidv4()
     clients.set(socketId, ws)
 
+    console.log({socketId})
+
     ws.on('close', () => {
       clients.delete(socketId)
+      // TODO delete wallet if not used by anyone else
     })
 
     ws.on('message', async (payload: string) => {
       const {type, data} = JSON.parse(payload)
+      console.log('ws message', {type, data})
 
       switch (type) {
         case 'start_wallet': {

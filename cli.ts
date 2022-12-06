@@ -1,57 +1,43 @@
-import readline from 'readline'
 import WebSocket from 'ws'
 
-function setupKeyListener(handler: (key: string) => void) {
-  readline.emitKeypressEvents(process.stdin)
-  process.stdin.setRawMode(true)
+import {formatUSD, loadWalletBalanceLoop, sendSocketMessage, setupKeyListener} from './utils'
 
-  process.stdin.on('keypress', (str, key) => {
-    if (key.ctrl && key.name === 'c') {
-      process.stdout.write('\n')
-      process.exit()
-    } else {
-      handler(str)
+const ws = new WebSocket('ws://localhost:3000')
+const address = process.argv[2]
+const OUTPUT_LINES_COUNT = 4
+
+ws.on('open', () => {
+  sendSocketMessage(ws, 'start_wallet', address)
+  sendSocketMessage(ws, 'read_balance')
+
+  setupKeyListener({
+    onEnter: () => {
+      sendSocketMessage(ws, 'read_balance')
+    },
+    onClose: async () => {
+      Array.apply(null, Array(OUTPUT_LINES_COUNT)).forEach(() => process.stdout.write('\n'))
+      await ws.close()
+      process.exit(0)
+    },
+  })
+
+  loadWalletBalanceLoop(ws)
+})
+
+ws.on('message', (json: string) => {
+  const {data, type} = JSON.parse(json)
+
+  switch (type) {
+    case 'balance': {
+      const {balance, price, currency} = data
+
+      process.stdout.write(`Wallet:  ${currency.toUpperCase()}\n`)
+      process.stdout.write(`Price:   ${price < 0 ? '...' : formatUSD(Number(price))}\n`)
+      process.stdout.write(`Balance: ${balance < 0 ? '...' : balance}\n`)
+      process.stdout.write(`Value:   ${balance < 0 ? '...' : formatUSD(balance * price)}\n`)
+      process.stdout.moveCursor(0, -OUTPUT_LINES_COUNT)
+
+      break
     }
-  })
-}
-
-async function main() {
-  const ws = new WebSocket('ws://localhost:3000')
-  const address = process.argv[2]
-
-  ws.on('open', () => {
-    ws.send(JSON.stringify({type: 'start_wallet', data: address}))
-    ws.send(JSON.stringify({type: 'read_balance', data: null}))
-
-    setupKeyListener(() => {
-      ws.send(JSON.stringify({type: 'read_balance', data: null}))
-    })
-
-    process.stdout.write('Loading...')
-  })
-
-  ws.on('message', (payload: string) => {
-    const {data, type} = JSON.parse(payload)
-
-    switch (type) {
-      case 'balance': {
-        const {balance, price, currency} = data
-
-        if (balance < 0 || price < 0) break
-
-        process.stdout.clearLine(0)
-        process.stdout.cursorTo(0)
-
-        const balanceUSD = (balance * price).toFixed(2)
-        const currencyTicker = currency.toUpperCase()
-        const priceUSD = Number(price).toFixed(2)
-
-        process.stdout.write(`$${balanceUSD} (${balance} ${currencyTicker} @ $${priceUSD})`)
-
-        break
-      }
-    }
-  })
-}
-
-main()
+  }
+})
