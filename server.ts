@@ -2,7 +2,7 @@ import {v4 as uuidv4} from 'uuid'
 import {WebSocketServer, WebSocket} from 'ws'
 import {Kafka} from 'kafkajs'
 import {getCurrencyFromAddress, sendSocketMessage} from './utils'
-import {WebSocketEvents} from './events'
+import {KafkaTopics, WebSocketEvents} from './events'
 
 const kafka = new Kafka({brokers: ['kafka:9092']})
 const producer = kafka.producer()
@@ -26,7 +26,7 @@ const prices: Record<string, number | null> = {btc: null, eth: null} // currency
 async function pleaseCrawlBalance(address: string, currency: string) {
   const payload = JSON.stringify({address, currency})
   await producer.send({
-    topic: 'task_crawl_balance',
+    topic: KafkaTopics.TaskToReadBalance,
     messages: [{key: address, value: payload}],
   })
 }
@@ -52,8 +52,8 @@ async function main() {
   await balanceConsumer.connect()
   await producer.connect()
 
-  await priceConsumer.subscribe({topic: 'price', fromBeginning: false})
-  await balanceConsumer.subscribe({topic: 'wallet_balance', fromBeginning: false})
+  await priceConsumer.subscribe({topic: KafkaTopics.CurrencyPrice, fromBeginning: false})
+  await balanceConsumer.subscribe({topic: KafkaTopics.WalletBalance, fromBeginning: false})
 
   await priceConsumer.run({
     eachMessage: async ({message}) => {

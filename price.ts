@@ -1,11 +1,13 @@
 const {Spot} = require('@binance/connector')
 import {Kafka} from 'kafkajs'
+import {KafkaTopics} from './events'
+
+const BTC_USDT_TICKER = 'btcusdt'
+const ETH_USDT_TICKER = 'ethusdt'
 
 const client = new Spot()
 const kafka = new Kafka({brokers: ['kafka:9092']})
 const producer = kafka.producer()
-const BTC_USDT_TICKER = 'btcusdt'
-const ETH_USDT_TICKER = 'ethusdt'
 
 async function main() {
   await producer.connect()
@@ -15,10 +17,10 @@ async function main() {
       const {stream, data} = JSON.parse(json)
       const currency = stream.split('usdt@ticker')[0]
       const price = Number(data.c)
-      const payload = JSON.stringify({price})
 
+      const payload = JSON.stringify({price})
       await producer.send({
-        topic: 'price',
+        topic: KafkaTopics.CurrencyPrice,
         messages: [{key: currency, value: payload}],
       })
     },

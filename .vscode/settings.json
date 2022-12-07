@@ -1,10 +1,11 @@
 {
   "cSpell.words": [
-    "BLOCKCYPHER",
-    "BTCUSDT",
-    "ETHUSDT",
+    "addrs",
+    "blockcypher",
+    "btcusdt",
+    "ethusdt",
     "kafkajs",
-    "Redpanda",
+    "redpanda",
     "uuidv"
   ]
 }

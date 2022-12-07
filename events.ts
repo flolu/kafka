@@ -7,3 +7,9 @@ export enum WebSocketEvents {
   BalanceUpdated = 'balance_updated',
   PriceUpdated = 'price_updated',
 }
+
+export enum KafkaTopics {
+  TaskToReadBalance = 'task_to_read_balance',
+  WalletBalance = 'wallet_balance',
+  CurrencyPrice = 'currency_price',
+}

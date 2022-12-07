@@ -1,6 +1,5 @@
 import WebSocket from 'ws'
 import {WebSocketEvents} from './events'
-
 import {
   getCurrencyFromAddress,
   loadWalletBalanceLoop,

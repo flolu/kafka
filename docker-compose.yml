@@ -20,6 +20,7 @@ services:
     container_name: kafka_example_price
     volumes:
       - ./price.ts:/price.ts
+      - ./events.ts:/events.ts
       - ./node_modules:/node_modules
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
@@ -31,6 +32,7 @@ services:
     container_name: kafka_example_balance
     volumes:
       - ./balance.ts:/balance.ts
+      - ./events.ts:/events.ts
       - ./node_modules:/node_modules
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
