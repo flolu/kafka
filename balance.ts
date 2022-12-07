@@ -4,8 +4,9 @@ import {KafkaTopics} from './events'
 
 const BLOCKCYPHER_API_URL = 'https://api.blockcypher.com/v1'
 const BLOCKCYPHER_TOKEN = process.env.BLOCKCYPHER_TOKEN
+const KAFKA_BROKER = process.env.KAFKA_BROKER!
 
-const kafka = new Kafka({brokers: ['kafka:9092'], logLevel: logLevel.ERROR})
+const kafka = new Kafka({brokers: [KAFKA_BROKER], logLevel: logLevel.ERROR})
 const producer = kafka.producer()
 
 /**

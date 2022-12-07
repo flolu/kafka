@@ -3,8 +3,9 @@ import {faker} from '@faker-js/faker'
 
 const EXAMPLE_TOPIC = 'example-topic'
 const EXAMPLE_CONSUMER = 'example-consumer'
+const KAFKA_BROKER = process.env.KAFKA_BROKER!
 
-const kafka = new Kafka({brokers: ['kafka:9092'], logLevel: logLevel.ERROR})
+const kafka = new Kafka({brokers: [KAFKA_BROKER], logLevel: logLevel.ERROR})
 const producer = kafka.producer()
 const consumer = kafka.consumer({groupId: EXAMPLE_CONSUMER})
 

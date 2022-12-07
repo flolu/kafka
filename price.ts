@@ -4,9 +4,10 @@ import {KafkaTopics} from './events'
 
 const BTC_USDT_TICKER = 'btcusdt'
 const ETH_USDT_TICKER = 'ethusdt'
+const KAFKA_BROKER = process.env.KAFKA_BROKER!
 
 const client = new Spot()
-const kafka = new Kafka({brokers: ['kafka:9092'], logLevel: logLevel.ERROR})
+const kafka = new Kafka({brokers: [KAFKA_BROKER], logLevel: logLevel.ERROR})
 const producer = kafka.producer()
 
 async function main() {

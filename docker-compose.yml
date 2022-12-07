@@ -14,6 +14,8 @@ services:
       - '3000:3000'
     working_dir: /
     command: npx ts-node-dev server.ts
+    environment:
+      KAFKA_BROKER: kafka:9092
     depends_on:
       kafka:
         condition: service_healthy
@@ -29,6 +31,8 @@ services:
       - ./package.json:/package.json
     working_dir: /
     command: npx ts-node-dev price.ts
+    environment:
+      KAFKA_BROKER: kafka:9092
     depends_on:
       kafka:
         condition: service_healthy
@@ -44,6 +48,8 @@ services:
       - ./package.json:/package.json
     working_dir: /
     command: npx ts-node-dev balance.ts
+    environment:
+      KAFKA_BROKER: kafka:9092
     env_file: '.env'
     depends_on:
       kafka:
