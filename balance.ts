@@ -1,11 +1,11 @@
 import axios from 'axios'
-import {Kafka} from 'kafkajs'
+import {Kafka, logLevel} from 'kafkajs'
 import {KafkaTopics} from './events'
 
 const BLOCKCYPHER_API_URL = 'https://api.blockcypher.com/v1'
 const BLOCKCYPHER_TOKEN = process.env.BLOCKCYPHER_TOKEN
 
-const kafka = new Kafka({brokers: ['kafka:9092']})
+const kafka = new Kafka({brokers: ['kafka:9092'], logLevel: logLevel.ERROR})
 const producer = kafka.producer()
 
 /**
@@ -31,6 +31,8 @@ async function main() {
   await taskConsumer.connect()
 
   await taskConsumer.subscribe({topic: KafkaTopics.TaskToReadBalance, fromBeginning: false})
+
+  console.log('Started successfully')
 
   await taskConsumer.run({
     eachMessage: async ({message}) => {

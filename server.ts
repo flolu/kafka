@@ -1,10 +1,10 @@
 import {v4 as uuidv4} from 'uuid'
 import {WebSocketServer, WebSocket} from 'ws'
-import {Kafka} from 'kafkajs'
+import {Kafka, logLevel} from 'kafkajs'
 import {getCurrencyFromAddress, sendSocketMessage} from './utils'
 import {KafkaTopics, WebSocketEvents} from './events'
 
-const kafka = new Kafka({brokers: ['kafka:9092']})
+const kafka = new Kafka({brokers: ['kafka:9092'], logLevel: logLevel.ERROR})
 const producer = kafka.producer()
 
 /**
@@ -113,15 +113,18 @@ async function main() {
     })
   })
 
-  process.on('SIGTERM', async () => {
-    wss.close()
-    await priceConsumer.disconnect()
-    await balanceConsumer.disconnect()
-    await kafka.admin().deleteGroups([priceConsumerGroupId, balanceConsumerGroupId])
-    await producer.disconnect()
+  process.on('SIGTERM', () => {
+    wss.close(async () => {
+      await priceConsumer.disconnect()
+      await balanceConsumer.disconnect()
+      await kafka.admin().deleteGroups([priceConsumerGroupId, balanceConsumerGroupId])
+      await producer.disconnect()
 
-    process.exit(0)
+      process.exit(0)
+    })
   })
+
+  console.log('Started successfully')
 }
 
 main()

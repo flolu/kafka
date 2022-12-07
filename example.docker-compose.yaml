@@ -1,56 +1,21 @@
 version: '3'
 services:
-  server:
+  example:
+    container_name: kafka_example_app
     image: node:16
-    container_name: wallet_watcher_server
     volumes:
-      - ./server.ts:/server.ts
-      - ./utils.ts:/utils.ts
-      - ./events.ts:/events.ts
-      - ./node_modules:/node_modules
-      - ./tsconfig.json:/tsconfig.json
-      - ./package.json:/package.json
-    ports:
-      - '3000:3000'
-    working_dir: /
-    command: npx ts-node-dev server.ts
-    depends_on:
-      kafka:
-        condition: service_healthy
-
-  price:
-    image: node:16
-    container_name: wallet_watcher_price
-    volumes:
-      - ./price.ts:/price.ts
-      - ./events.ts:/events.ts
+      - ./example.ts:/example.ts
       - ./node_modules:/node_modules
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
     working_dir: /
-    command: npx ts-node-dev price.ts
-    depends_on:
-      kafka:
-        condition: service_healthy
-
-  balance:
-    image: node:16
-    container_name: wallet_watcher_balance
-    volumes:
-      - ./balance.ts:/balance.ts
-      - ./events.ts:/events.ts
-      - ./node_modules:/node_modules
-      - ./tsconfig.json:/tsconfig.json
-      - ./package.json:/package.json
-    working_dir: /
-    command: npx ts-node-dev balance.ts
-    env_file: '.env'
+    command: npx ts-node-dev example.ts
     depends_on:
       kafka:
         condition: service_healthy
 
   zookeeper:
-    container_name: wallet_watcher_zookeeper
+    container_name: kafka_example_zookeeper
     image: confluentinc/cp-zookeeper:7.3.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -61,7 +26,7 @@ services:
       driver: none
 
   kafka:
-    container_name: wallet_watcher_kafka
+    container_name: kafka_example_broker
     image: confluentinc/cp-kafka:7.3.0
     depends_on:
       - zookeeper
@@ -81,15 +46,3 @@ services:
       interval: 2s
       timeout: 30s
       retries: 30
-
-  console:
-    container_name: wallet_watcher_console
-    image: docker.redpanda.com/vectorized/console:master-173596f
-    restart: on-failure
-    environment:
-      KAFKA_BROKERS: kafka:9092
-    ports:
-      - 8080:8080
-    depends_on:
-      kafka:
-        condition: service_healthy

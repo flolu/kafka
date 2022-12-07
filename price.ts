@@ -1,12 +1,12 @@
 const {Spot} = require('@binance/connector')
-import {Kafka} from 'kafkajs'
+import {Kafka, logLevel} from 'kafkajs'
 import {KafkaTopics} from './events'
 
 const BTC_USDT_TICKER = 'btcusdt'
 const ETH_USDT_TICKER = 'ethusdt'
 
 const client = new Spot()
-const kafka = new Kafka({brokers: ['kafka:9092']})
+const kafka = new Kafka({brokers: ['kafka:9092'], logLevel: logLevel.ERROR})
 const producer = kafka.producer()
 
 async function main() {
@@ -34,6 +34,8 @@ async function main() {
 
     process.exit(0)
   })
+
+  console.log('Started successfully')
 }
 
 main()
