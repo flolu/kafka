@@ -2,7 +2,7 @@ version: '3'
 services:
   server:
     image: node:16
-    container_name: wallet_watcher_server
+    container_name: legacy_wallet_watcher_server
     volumes:
       - ./server.ts:/server.ts
       - ./utils.ts:/utils.ts
@@ -12,7 +12,6 @@ services:
       - ./package.json:/package.json
     ports:
       - '3000:3000'
-    working_dir: /
     command: npx ts-node-dev server.ts
     environment:
       KAFKA_BROKER: kafka:9092
@@ -22,14 +21,13 @@ services:
 
   price:
     image: node:16
-    container_name: wallet_watcher_price
+    container_name: legacy_wallet_watcher_price
     volumes:
       - ./price.ts:/price.ts
       - ./events.ts:/events.ts
       - ./node_modules:/node_modules
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
-    working_dir: /
     command: npx ts-node-dev price.ts
     environment:
       KAFKA_BROKER: kafka:9092
@@ -39,14 +37,13 @@ services:
 
   balance:
     image: node:16
-    container_name: wallet_watcher_balance
+    container_name: legacy_wallet_watcher_balance
     volumes:
       - ./balance.ts:/balance.ts
       - ./events.ts:/events.ts
       - ./node_modules:/node_modules
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
-    working_dir: /
     command: npx ts-node-dev balance.ts
     environment:
       KAFKA_BROKER: kafka:9092
@@ -56,7 +53,7 @@ services:
         condition: service_healthy
 
   zookeeper:
-    container_name: wallet_watcher_zookeeper
+    container_name: legacy_wallet_watcher_zookeeper
     image: confluentinc/cp-zookeeper:7.3.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -67,7 +64,7 @@ services:
       driver: none
 
   kafka:
-    container_name: wallet_watcher_kafka
+    container_name: legacy_wallet_watcher_kafka
     image: confluentinc/cp-kafka:7.3.0
     depends_on:
       - zookeeper
@@ -89,7 +86,7 @@ services:
       retries: 30
 
   console:
-    container_name: wallet_watcher_console
+    container_name: legacy_wallet_watcher_console
     image: docker.redpanda.com/vectorized/console:master-173596f
     restart: on-failure
     environment:

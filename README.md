@@ -35,7 +35,7 @@
 **Setup**
 
 - `npm install` (Install NPM dependencies)
-- `docker-compose -f docker-compose.yml up --build` (Start services)
+- `docker-compose -f docker-compose.yaml up --build` (Start services)
 - Optionally set environment variables in [`.env`](.env):
   - `BLOCKCYPHER_TOKEN` (https://accounts.blockcypher.com/tokens)
 
@@ -55,7 +55,7 @@
 
 **Cleanup**
 
-- `docker-compose -f docker-compose.yml rm -s -f -v` (Stop and remove Docker containers)
+- `docker-compose -f docker-compose.yaml rm -s -f -v` (Stop and remove Docker containers)
 
 # Example
 

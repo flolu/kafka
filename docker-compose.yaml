@@ -1,0 +1,70 @@
+version: '3'
+services:
+  server:
+    image: node:16
+    container_name: wallet_watcher_server
+    volumes:
+      - ./server.ts:/server.ts
+      - ./utils.ts:/utils.ts
+      - ./events.ts:/events.ts
+      - ./node_modules:/node_modules
+      - ./tsconfig.json:/tsconfig.json
+      - ./package.json:/package.json
+    ports:
+      - '3000:3000'
+    command: npx ts-node-dev server.ts
+    environment:
+      KAFKA_BROKER: redpanda:29092
+    depends_on:
+      - redpanda
+
+  price:
+    image: node:16
+    container_name: wallet_watcher_price
+    volumes:
+      - ./price.ts:/price.ts
+      - ./events.ts:/events.ts
+      - ./node_modules:/node_modules
+      - ./tsconfig.json:/tsconfig.json
+      - ./package.json:/package.json
+    command: npx ts-node-dev price.ts
+    environment:
+      KAFKA_BROKER: redpanda:29092
+    depends_on:
+      - redpanda
+
+  balance:
+    image: node:16
+    container_name: wallet_watcher_balance
+    volumes:
+      - ./balance.ts:/balance.ts
+      - ./events.ts:/events.ts
+      - ./node_modules:/node_modules
+      - ./tsconfig.json:/tsconfig.json
+      - ./package.json:/package.json
+    command: npx ts-node-dev balance.ts
+    environment:
+      KAFKA_BROKER: redpanda:29092
+    env_file: '.env'
+    depends_on:
+      - redpanda
+
+  redpanda:
+    image: docker.redpanda.com/vectorized/redpanda:v22.2.2
+    container_name: wallet_watcher_broker
+    command:
+      - redpanda start
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092
+    ports:
+      - 29092:29092
+
+  console:
+    container_name: wallet_watcher_console
+    image: docker.redpanda.com/vectorized/console:master-173596f
+    environment:
+      KAFKA_BROKERS: redpanda:29092
+    ports:
+      - 8080:8080
+    depends_on:
+      - redpanda
