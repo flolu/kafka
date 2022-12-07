@@ -19,16 +19,19 @@ async function main() {
 
       await producer.send({
         topic: 'price',
-        messages: [{key: currency, value: Buffer.from(payload, 'utf-8')}],
+        messages: [{key: currency, value: payload}],
       })
     },
   }
 
   const wsRef = client.combinedStreams([`${BTC_USDT_TICKER}@ticker`, `${ETH_USDT_TICKER}@ticker`], callbacks)
 
-  // setTimeout(() => client.unsubscribe(wsRef), 3000)
-}
+  process.on('SIGTERM', async () => {
+    client.unsubscribe(wsRef)
+    await producer.disconnect()
 
-// TODO handle shutdown
+    process.exit(0)
+  })
+}
 
 main()

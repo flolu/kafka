@@ -36,6 +36,8 @@
 
 - `npm install` (Install NPM dependencies)
 - `docker-compose -f docker-compose.yml up --build` (Start services)
+- Optionally set environment variables in [`.env`](.env):
+  - `BLOCKCYPHER_TOKEN` (https://accounts.blockcypher.com/tokens)
 
 **Run**
 
@@ -54,8 +56,13 @@
 
 - Fetching the balance might stop working at some point, because [Blockcypher](https://www.blockcypher.com) limits the amount of requests one can send to their API
 
+**Cleanup**
+
+- `docker-compose -f docker-compose.yml rm -s -f -v` (Stop and remove Docker containers)
+
 # Codebase
 
+- [`example.ts`](example.ts) (Minimal example of using Kafka with Node.js)
 - [`cli.ts`](cli.ts) (CLI application to read wallet data in realtime)
 - [`server.ts`](server.ts) (WebSocket server that communicates with CLI and with Kafka)
 - [`balance.ts`](balance.ts) (Service, that crawls wallet balance on demand)

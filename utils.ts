@@ -17,16 +17,29 @@ export function sendSocketMessage<T>(ws: WebSocket, type: string, data?: T) {
   ws.send(message)
 }
 
-export function loadWalletBalanceLoop(ws: WebSocket) {
+export function loadWalletBalanceLoop(ws: WebSocket, seconds: number) {
   setTimeout(() => {
     if (ws.readyState !== ws.CLOSED) {
       sendSocketMessage(ws, 'read_balance')
-      loadWalletBalanceLoop(ws)
+      loadWalletBalanceLoop(ws, seconds)
     }
-  }, 10 * 1000)
+  }, seconds * 1000)
 }
 
 export function formatUSD(amount: number) {
   const format = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'})
   return format.format(amount)
+}
+
+export function printBalance(currency: string, price?: number, balance?: number) {
+  process.stdout.write(`Wallet:  ${currency.toUpperCase()}\n`)
+  process.stdout.write(`Price:   ${price ? formatUSD(Number(price)) : '...'}\n`)
+  process.stdout.write(`Balance: ${balance || '...'}\n`)
+  process.stdout.write(`Value:   ${balance !== undefined && price ? formatUSD(balance * price) : '...'}\n`)
+
+  process.stdout.moveCursor(0, -4)
+}
+
+export function getCurrencyFromAddress(address: string) {
+  return address.startsWith('0x') ? 'eth' : 'btc'
 }
