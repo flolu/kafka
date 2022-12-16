@@ -1,5 +1,6 @@
 import WebSocket from 'ws'
 import readline from 'readline'
+import {WebSocketEvents} from './events'
 
 export function setupKeyListener(handlers: {onEnter: () => void; onClose: () => void}) {
   readline.emitKeypressEvents(process.stdin)
@@ -20,7 +21,7 @@ export function sendSocketMessage<T>(ws: WebSocket, type: string, data?: T) {
 export function loadWalletBalanceLoop(ws: WebSocket, seconds: number) {
   setTimeout(() => {
     if (ws.readyState !== ws.CLOSED) {
-      sendSocketMessage(ws, 'read_balance')
+      sendSocketMessage(ws, WebSocketEvents.ReadBalance)
       loadWalletBalanceLoop(ws, seconds)
     }
   }, seconds * 1000)

@@ -13,8 +13,7 @@
 - Interact with Kafka through Node.js
 - Produce/consume events to/from topics
 - Use Kafka as a queue and as a publish/subscribe system
-- Kafka with Zookeeper, without Zookeeper and with Redpanda
-- Read latest events or from the beginning
+- Kafka with Zookeeper and without Zookeeper using Redpanda
 - Make use of Kafka's partitioning ability
 
 # Tech Stack
